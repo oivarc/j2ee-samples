@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      >
+
+    <f:view contentType="text/html" locale="#{empty userPreferences.locale ? 'en' : userPreferences.locale}">
+        <h:head>
+            <title>#{msg['messagebundleSample.pageTitle']}</title>
+            <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+            <meta http-equiv="Content-Language" content="en" />
+            <meta name="keywords" content="" />
+            <meta name="description" content="" />
+            <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+            <link type="text/css" rel="stylesheet" href="css/style.css" />
+        </h:head>
+        <h:body>
+
+            <h:form id="contentForm" prependId="false">
+                <p:panelGrid columns="2" > 
+                    <p:outputLabel for="pageLanguage" value="#{msg['messagebundleSample.pageLanguage']}" />
+                    <p:selectOneMenu id="pageLanguage" value="#{userPreferences.locale}" >
+                        <p:ajax update="@form" />
+                        <f:selectItems value="#{messageBundleListBean.languages}" />
+                    </p:selectOneMenu>
+                </p:panelGrid>
+                <br/>
+                <p:panelGrid columns="4" > 
+                    <p:selectOneMenu value="#{messageBundleListBean.languageFilter}" >
+                        <p:ajax update="messageBundleList" listener="#{messageBundleListBean.filterOnLabel}"/>
+                        <f:selectItems value="#{messageBundleListBean.languages}" />
+                    </p:selectOneMenu>
+                    <p:inputText value="#{messageBundleListBean.key}" ></p:inputText>
+                    <p:inputText value="#{messageBundleListBean.value}" ></p:inputText>
+                    <p:commandButton value="Add" actionListener="#{messageBundleListBean.add}" ajax="false" />
+                </p:panelGrid>
+                <br/>
+                <p:dataTable value="#{messageBundleListBean.lazyModel}" id="messageBundleList"
+                             var="bundle"
+                             rows="8"
+                             paginator="true" rowIndexVar="rowIndex"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="8, 12, 20, 50, 100"
+                             currentPageReportTemplate="Viewing {startRecord} - {endRecord} of {totalRecords}"
+                             widgetVar="messageBundleListWidget"
+                             emptyMessage="#{msg['messagebundleSample.noRecordsFound']}" lazy="true"
+                             editable="true"
+                             >
+
+                    <p:ajax event="rowEdit" listener="#{messageBundleListBean.onEdit}" update="messageBundleList" />
+
+                    <p:column id="keyColumn" sortBy="#{bundle.key}" headerText="#{msg['messagebundleSample.header.key']}" 
+                              style="width: 500px; border-left: 1px solid #C0BEBE;">
+                        <h:outputText value="#{bundle.key}" />
+                    </p:column>
+
+                    <p:column headerText="#{msg['messagebundleSample.header.label']}" style="width: 250px;">
+                        <p:cellEditor>
+                            <f:facet name="output"><h:outputText value="#{bundle.labels[messageBundleListBean.languageFilter]}" /></f:facet>
+                            <f:facet name="input"><p:inputText id="labelInput" value="#{bundle.labels[messageBundleListBean.languageFilter]}" style="width:96%"/></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+
+                    <p:column id="referenceColumn" headerText="#{msg['messagebundleSample.header.referenceLabel']}"
+                              style="width: 250px; border-right: 1px solid #C0BEBE;">
+                        <h:outputText value="#{bundle.labels['en']}" />
+                    </p:column>
+
+                    <p:column style="width:50px; border-right: 1px solid #C0BEBE;">
+                        <p:rowEditor />
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>
