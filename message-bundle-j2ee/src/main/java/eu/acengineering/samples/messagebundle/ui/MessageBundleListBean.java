@@ -24,9 +24,6 @@ import javax.faces.bean.ViewScoped;
 @ManagedBean
 public class MessageBundleListBean implements Serializable {
 
-    /**
-     * The serial version uid.
-     */
     private static final long serialVersionUID = -6251300594266251350L;
 
     private LazyDataModel<UIMessageBundle> lazyModel;
